@@ -36,7 +36,7 @@ bool Camera::OnUpdate(float ts)
 
 	bool moved = false;
 
-	// 定义上方向，并基于前方向计算右方向
+	// 定义上方向，并基于前方向计算右方向  
 	constexpr glm::vec3 upDirection(0.0f, 1.0f, 0.0f);
 	glm::vec3 rightDirection = glm::cross(m_ForwardDirection, upDirection);
 
