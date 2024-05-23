@@ -1,3 +1,9 @@
+1、实现了光线和球体的相交和可视化了法线并添加了一个光照。
+photo/normal.PNG
+2、添加了可交互的3D相机系统，多渲染了一个球体和添加了修改球体位置，半径，颜色的功能。
+photo/towsphere.PNG
+3、添加了光线反射的功能
+photo/reflect.PNG
 # Walnut
 
 Walnut is a simple application framework built with Dear ImGui and designed to be used with Vulkan - basically this means you can seemlessly blend real-time Vulkan rendering with a great UI library to build desktop applications. The plan is to expand Walnut to include common utilities to make immediate-mode desktop apps and simple Vulkan applications.
