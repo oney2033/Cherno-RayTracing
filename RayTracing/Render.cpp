@@ -19,23 +19,13 @@ namespace Utils
 
 Renderer::HitPayload Renderer::TraceRay( const Ray& ray)
 {
-	
-	//glm::vec3 rayDirection(coord.x, coord.y, -1.0f);
-	//glm::vec3 rayOrigin(0.0f,0.0f,2.0f);
-	//float radius = 0.5f;
-	//rayDirection = glm::normalize(rayDirection);
-
 	//at^2 + bt + c = 0
 	//(bx^2 + by^2)t^2 + (2(axbx + ayby))t + (ax^2 + ay^2 - r^2) = 0
 	// a = ray origin
 	// b = ray direction
 	// r = radius
 	// t = hit distance
-	//float a = rayDirection.x * rayDirection.x + rayDirection.y * rayDirection.y + rayDirection.z * rayDirection.z;
-	//const Sphere* closestSphere = nullptr;
-
 	int closestSphere = -1;
-
 	//float hitDistance = FLT_MAX;
 	float hitDistance = std::numeric_limits<float>::max();
 
@@ -47,8 +37,6 @@ Renderer::HitPayload Renderer::TraceRay( const Ray& ray)
 
 		float a = glm::dot(ray.Direction, ray.Direction);
 		float b = 2.0f * glm::dot(origin, ray.Direction);
-		//float c = glm::dot(origin, origin) - radius * radius;
-
 		float c = glm::dot(origin, origin) - sphere.Radius * sphere.Radius;
 
 		//b^2 - 4ac
@@ -56,7 +44,6 @@ Renderer::HitPayload Renderer::TraceRay( const Ray& ray)
 		if (discriminant < 0.0f)
 			continue;
 
-		//(-b +- sqrt(discriminant)) / 2a
 		float t0 = (-b + glm::sqrt(discriminant)) / (2.0f * a);
 		float closestT = (-b - glm::sqrt(discriminant)) / (2.0f * a);
 		if (closestT > 0.0f && closestT < hitDistance)
@@ -78,19 +65,10 @@ void Renderer::Render(const Scene& scene, const Camera& camera)
 {
 	m_ActiveScene = &scene;
 	m_ActiveCamera = &camera;
-
-	//Ray ray;
-	//ray.Origin = camera.GetPosition();
-	//render every pixel
 	for (uint32_t y = 0; y < m_FinalImage->GetHeight(); y++)
 	{
 		for (uint32_t x = 0; x < m_FinalImage->GetWidth(); x++)
 		{
-			//float aspectRation = m_FinalImage->GetWidth() /(float) m_FinalImage->GetHeight();
-			//glm::vec2 coord = { (float)x / (float)m_FinalImage->GetWidth(),(float)y / (float)m_FinalImage->GetHeight() };
-			//coord = coord * 2.0f - 1.0f; //-1 -> 1
-			//ray.Direction = camera.GetRayDirections()[x + y * m_FinalImage->GetWidth()];
-			//coord.x *= aspectRation;
 			glm::vec4 color = PerPixel(x,y);
 			color = glm::clamp(color, glm::vec4(0.0f), glm::vec4(1.0f));
 			m_ImageData[x + y*m_FinalImage->GetWidth()] = Utils::ConvertToRGBA(color);
@@ -107,14 +85,14 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 
 	glm::vec3 color(0.0f);
 	float multiplier = 1.0f;
-	int bounces = 2;
+	int bounces = 5;
 	for (int i = 0; i < bounces; i++)
 	{
 
 	Renderer::HitPayload payload = TraceRay(ray);
 		if (payload.HitDistance < 0.0f)
 		{
-			glm::vec3 skyColor = glm::vec3(0.0f, 0.0f, 0.f);
+			glm::vec3 skyColor = glm::vec3(0.6f, 0.7f, 0.9f);
 			color += skyColor * multiplier;
 			break;
 		}
@@ -123,16 +101,15 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f);// = cos(angle);
 
 		const Sphere& sphere = m_ActiveScene->Spheres[payload.ObjectIndex];
-		glm::vec3 sphereColor = sphere.Albedo;
-		//glm::vec3 sphereColor(1, 0, 1);
+		const Material& material = m_ActiveScene->Materials[sphere.MaterialIndex];
+
+		glm::vec3 sphereColor = material.Albedo;
 		sphereColor *= lightIntensity;
-		//sphereColor = (normal * 0.5f + 0.5f)*d;	
-		//return glm::vec4(sphereColor, 1.0f);
-		//return glm::vec4(hitpoint, 1.0f);
 		color +=sphereColor * multiplier;
-		multiplier *= 0.7f;
+		multiplier *= 0.5f;
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
-		ray.Direction = glm::reflect(ray.Direction, payload.WorldNormal);
+		ray.Direction = glm::reflect(ray.Direction, payload.WorldNormal
+			+ material.Roughness * Walnut::Random::Vec3(-0.5f,0.5f));
 	}
 	return glm::vec4(color, 1.0f);
 }
@@ -149,7 +126,7 @@ Renderer::HitPayload Renderer::ClosestHit(const Ray& ray, float hitDistance, int
 	glm::vec3 origin = ray.Origin - closestSphere.Position;
 
 	payload.WorldPosition = origin + ray.Direction * hitDistance;
-
+	 
 	payload.WorldNormal = glm::normalize(payload.WorldPosition); //hitpoint - shpereCenter
 	payload.WorldPosition += closestSphere.Position;
 
