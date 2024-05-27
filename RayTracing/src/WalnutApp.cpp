@@ -17,33 +17,79 @@ public:
 {
 		Material& pinkSphere = m_Scene.Materials.emplace_back();
 		pinkSphere.Albedo = { 1.0f,0.0f,1.0f };
-		pinkSphere.Roughness = 0.0f;
+		pinkSphere.Roughness = 1.f;
+		pinkSphere.IsTransparent = false;
+
 
 		Material& blueSphere = m_Scene.Materials.emplace_back();
 		blueSphere.Albedo = { 0.2f,0.3f,1.0f };
 		blueSphere.Roughness = 0.1f;
+		blueSphere.IsTransparent = false;
 
-	{
-		Sphere sphere;
-		sphere.Position = { 0.0f,0.0f,0.0f };
-		sphere.Radius = 1.0f;
-		sphere.MaterialIndex = 0;
-		m_Scene.Spheres.emplace_back(sphere);
-	}
+		Material& leftSphere = m_Scene.Materials.emplace_back();
+		leftSphere.Albedo = { 1.0f,1.0f,1.0f };
+		leftSphere.Roughness = 0.5f;
+		leftSphere.IsTransparent = true;
+		leftSphere.Eta = 1.5;
 	
-	{
-		Sphere sphere;
-		sphere.Position = { 0.0f,-101.0f,0.0f };
-		sphere.Radius = 100.0f;
-		sphere.MaterialIndex = 1;
-		m_Scene.Spheres.emplace_back(sphere);
-	}
+		Material& rightSphere = m_Scene.Materials.emplace_back();
+		rightSphere.Albedo = { .2f,1.0f,1.0f };
+		rightSphere.Roughness = .5f;
+		rightSphere.IsTransparent = false;
+	
+		Material& bubbleSphere = m_Scene.Materials.emplace_back();
+		bubbleSphere.Albedo = { 1.0f,1.0f,1.0f };
+		bubbleSphere.Roughness = 0.5f;
+		bubbleSphere.IsTransparent = true;
+		bubbleSphere.Eta = 1/1.5;
+
+		{
+			Sphere sphere;
+			sphere.Position = { 0.0f,0.0f,0.0f };
+			sphere.Radius = 1.0f;
+			sphere.MaterialIndex = 0;
+			m_Scene.Spheres.emplace_back(sphere);
+		}
+
+		{
+			Sphere sphere;
+			sphere.Position = { 0.0f,-101.0f,-1.0f };
+			sphere.Radius = 100.0f;
+			sphere.MaterialIndex = 1;
+			m_Scene.Spheres.emplace_back(sphere);
+		}
+
+		{
+			Sphere sphere;
+			sphere.Position = { -2.0f,0.0f,1.0f };
+			sphere.Radius = 1.f;
+			sphere.MaterialIndex = 2;
+			m_Scene.Spheres.emplace_back(sphere);
+		}
+	
+		{
+			Sphere sphere;
+			sphere.Position = { 2.0f,0.0f,1.0f };
+			sphere.Radius = 1.0f;
+			sphere.MaterialIndex = 3;
+			m_Scene.Spheres.emplace_back(sphere);
+		}
+	
+		{
+			Sphere sphere;
+			sphere.Position = { -2.0f,0.5f,1.0f };
+			sphere.Radius = 0.5f;
+			sphere.MaterialIndex = 4;
+			m_Scene.Spheres.emplace_back(sphere);
+		}
+	
 	
 }
 
 	virtual void OnUpdate(float ts) override
 	{
-		m_Camera.OnUpdate(ts);
+		if (m_Camera.OnUpdate(ts))
+			m_Renderer.RestFrameIndex();
 	}
 
 	virtual void OnUIRender() override
@@ -54,6 +100,9 @@ public:
 		{
 			Render();
 		}
+		ImGui::Checkbox("Accumulate", &m_Renderer.GetSettings().Accumulate);
+		if (ImGui::Button("Rest"))
+			m_Renderer.RestFrameIndex();
 		ImGui::End();
 
 		ImGui::Begin("Scene");
