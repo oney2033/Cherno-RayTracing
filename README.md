@@ -7,7 +7,7 @@
 4、添加了物体的材质和漫反射
 [photo/Material.PNG](https://github.com/oney2033/Cherno-RayTracing/blob/main/photo/Material.PNG)
 5、添加了简单的路径追踪来累积每次的颜色
-[photo/Material.PNG](https://github.com/oney2033/Cherno-RayTracing/blob/main/photo/pathtracing.PNG)
+[photo/pathtracing.PNG](https://github.com/oney2033/Cherno-RayTracing/blob/main/photo/pathtracing.PNG)
 # Walnut
 
 Walnut is a simple application framework built with Dear ImGui and designed to be used with Vulkan - basically this means you can seemlessly blend real-time Vulkan rendering with a great UI library to build desktop applications. The plan is to expand Walnut to include common utilities to make immediate-mode desktop apps and simple Vulkan applications.
