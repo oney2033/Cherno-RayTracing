@@ -9,7 +9,9 @@ struct Material
 	float Metallic = 0.0f;
 	float Eta = 0.0f;
 	bool IsTransparent = false;
-
+	glm::vec3 EmissionColor{ 0.0f };
+	float EmissionPower = 0.0f;
+	glm::vec3 GetEmissionPower()const { return EmissionColor * EmissionPower; }
 
 };
 

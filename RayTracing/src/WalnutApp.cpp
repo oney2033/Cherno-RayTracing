@@ -17,31 +17,39 @@ public:
 {
 		Material& pinkSphere = m_Scene.Materials.emplace_back();
 		pinkSphere.Albedo = { 1.0f,0.0f,1.0f };
-		pinkSphere.Roughness = 1.f;
+		pinkSphere.Roughness = 0.1f;
 		pinkSphere.IsTransparent = false;
+		pinkSphere.Eta = 1.5;
 
 
 		Material& blueSphere = m_Scene.Materials.emplace_back();
-		blueSphere.Albedo = { 0.2f,0.3f,1.0f };
-		blueSphere.Roughness = 0.1f;
+		blueSphere.Albedo = { 0.0f,0.5f,0.0f };
+		blueSphere.Roughness = 0.0f;
 		blueSphere.IsTransparent = false;
 
+		Material& orangeSphere = m_Scene.Materials.emplace_back();
+		orangeSphere.Albedo = { 0.8f,0.5f,0.2f };
+		orangeSphere.Roughness = .1f;
+		orangeSphere.IsTransparent = false;
+		orangeSphere.EmissionColor = orangeSphere.Albedo;
+		orangeSphere.EmissionPower = 10.0f;
+		 
 		Material& leftSphere = m_Scene.Materials.emplace_back();
 		leftSphere.Albedo = { 1.0f,1.0f,1.0f };
 		leftSphere.Roughness = 0.5f;
 		leftSphere.IsTransparent = true;
 		leftSphere.Eta = 1.5;
-	
-		Material& rightSphere = m_Scene.Materials.emplace_back();
-		rightSphere.Albedo = { .2f,1.0f,1.0f };
-		rightSphere.Roughness = .5f;
-		rightSphere.IsTransparent = false;
-	
+		
+		
 		Material& bubbleSphere = m_Scene.Materials.emplace_back();
 		bubbleSphere.Albedo = { 1.0f,1.0f,1.0f };
 		bubbleSphere.Roughness = 0.5f;
-		bubbleSphere.IsTransparent = true;
-		bubbleSphere.Eta = 1/1.5;
+		bubbleSphere.IsTransparent = false;
+		bubbleSphere.EmissionColor = bubbleSphere.Albedo;
+		bubbleSphere.EmissionPower = 0.5f;
+		bubbleSphere.Eta = (1/1.5);
+
+
 
 		{
 			Sphere sphere;
@@ -61,27 +69,28 @@ public:
 
 		{
 			Sphere sphere;
-			sphere.Position = { -2.0f,0.0f,1.0f };
-			sphere.Radius = 1.f;
+			sphere.Position = { 18.4f,3.8f,-32.0f };
+			sphere.Radius = 20.0f;
 			sphere.MaterialIndex = 2;
 			m_Scene.Spheres.emplace_back(sphere);
 		}
-	
+		
 		{
 			Sphere sphere;
-			sphere.Position = { 2.0f,0.0f,1.0f };
+			sphere.Position = { -2.0f,0.0f,3.0f };
 			sphere.Radius = 1.0f;
 			sphere.MaterialIndex = 3;
 			m_Scene.Spheres.emplace_back(sphere);
 		}
-	
+		
 		{
 			Sphere sphere;
-			sphere.Position = { -2.0f,0.5f,1.0f };
-			sphere.Radius = 0.5f;
+			sphere.Position = { 0.3f,-0.9f,3.0f };
+			sphere.Radius = 0.2f;
 			sphere.MaterialIndex = 4;
 			m_Scene.Spheres.emplace_back(sphere);
 		}
+		
 	
 	
 }
@@ -125,7 +134,9 @@ public:
 			ImGui::ColorEdit3("Albedo", glm::value_ptr(material.Albedo));
 			ImGui::DragFloat("Roughness", &material.Roughness,0.05f,0.0f,1.0f);
 			ImGui::DragFloat("Matallic", &material.Metallic,0.05f,0.0f,1.0f);
-		
+			ImGui::ColorEdit3("Emission Color", glm::value_ptr(material.EmissionColor));
+			ImGui::DragFloat("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX);
+
 			ImGui::Separator();
 		
 			ImGui::PopID();
